@@ -68,7 +68,7 @@ int main() {
   string s;
   string rest = "";
   int aux_num = 0, count = 0, elem_per_color = 0;
-  vector <int> number;//hear I have rgb, I don't need them physically
+  vector <int> number;//here I have rgb, I don't need them physically
   int red[H][W],
       blue[H][W],
       green[H][W];
