@@ -1,5 +1,16 @@
+/*
+* Este programa toma un numero muy grande y a partir de sus digitos crea una imagen bmp
+* No importa que el archivo contenga caracteres no numericos, pues se encarga de eliminarlos.
+* El programa tambien determina el tamaño de la imagen dependiendo de el numero de datos que se quieran graficar
+*
+* Autores: Leiver Andres Campeón
+*          Jorge Mario Gil
+* Fecha: 30 Nov 2015
+* Version: V 3.1
+*
+*/
 #include <bits/stdc++.h>
-
+#define LIMIT 10000000
 using namespace std;
 
 int H = 1;
@@ -13,9 +24,13 @@ int str_to_int(string s) {
   return value;
 }
 
+bool is_num(char a) {
+    return (a > '0' && a < '9');
+}
+
 void primes_generator(int n) {//n max number until i'll calculate
 //in order to factorize the number (n) not gonna need a prime number greater than sqrt(n)
-  int sqrtN = int(sqrtN) + 1;
+  int sqrtN = int(sqrt(n)) + 1;
   vector <bool> sieve(sqrtN, false);
   sieve[0] = sieve[1] = true;
   for (int i = 2; i < sqrtN; ++i) {
@@ -43,11 +58,11 @@ void prime_factorize( int n ) {
     }
 
     ////////////////// test ////////////////////////////////////
-    // cout << "Factores del numero: " << n <<" :\n";
-    // for (int i = 0; i < factors.size(); ++i) {
-    //   cout<<factors[i]<<" ";
-    // }
-    // cout<<endl;
+    cout << "Factores del numero: " << n <<" :\n";
+    for (int i = 0; i < factors.size(); ++i) {
+      cout<<factors[i]<<" ";
+    }
+    cout<<endl;
     ////////////////// test ////////////////////////////////////
 
     ///////////////////// derteminate Height and Width //////////////////////
@@ -58,7 +73,22 @@ void prime_factorize( int n ) {
       else
         W *= factors[i];
     }
+    //set a limit of pixels, to be able to show it
+    if (H > 1200) {
+      H = 1200;
+    }
+    if (W > 1200) {
+      W = 1200;
+    }
 
+    //and this is because We want a semi-square image. dimension diference no greater than 400
+    if ((H - W) < -400) {
+      H += 400;
+      W -= 400;
+    } else if ((H - W) > 400) {
+      W += 400;
+      H -= 400;
+    }
     ////////////////// test ////////////////////////////////////
     // cout << "Las dimensiones de las matrices: (H, W) " << H << " " << W << endl;
    ////////////////// test ////////////////////////////////////
@@ -68,12 +98,32 @@ int main() {
   string s;
   string rest = "";
   int aux_num = 0, count = 0, elem_per_color = 0;
+  int counter = 0;
   vector <int> number;//here I have rgb, I don't need them physically
-  int red[H][W],
-      blue[H][W],
-      green[H][W];
+  // int red[H][W],
+  //     blue[H][W],
+  //     green[H][W];
 
-  ifstream finput("e.txt");
+  ifstream fin("sqrt5_web.txt");
+  ofstream fout("output_sqrt5.txt");
+  while (!fin.eof() && counter < LIMIT) {
+    string s;
+    fin >> s;
+
+    for (int i = 0; i < s.size(); ++i) {
+      if (is_num(s[i])) {
+          fout << s[i];
+          counter++;
+      }
+    }
+
+
+  }
+  cout << "Numeros procesados: " << counter << endl;
+  fout.close();
+  fin.close();
+
+  ifstream finput("output_sqrt5.txt");
 
   ///////////// dividing Number each 3 digits ////////////////////////////////////////
   string aux_str = "";
@@ -84,7 +134,7 @@ int main() {
     finput >> s;// get each line
     s = rest + s;
     // cout<<"before eliminate "<<s.size()<<endl;
-    s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());//eliminar todos los \n
+    //s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());//eliminar todos los \n
     // cout<<"after eliminate "<<s.size()<<endl;
     total_nums += s.size() - rest.size();
     for (int i = 0; i < s.size(); ++i){
@@ -117,7 +167,7 @@ int main() {
   }
 
   ////////////////// test ////////////////////////////////////
-  // cout<<"Tamaño del arreglo: "<<number.size()<<endl;
+  cout<<"Tamaño del arreglo: "<<number.size()<<endl;
   // cout<<"numeros procesados: "<<total_nums<<endl;
   ////////////////// test ////////////////////////////////////
 
@@ -181,7 +231,7 @@ int main() {
   // foutput.close();
 
 
-  f = fopen("e.bmp","wb");
+  f = fopen("sqrt5.bmp","wb");
 
   fwrite(bmpfileheader,1,14,f);
   fwrite(bmpinfoheader,1,40,f);
