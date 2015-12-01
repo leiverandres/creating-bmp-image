@@ -3,10 +3,10 @@
 * No importa que el archivo contenga caracteres no numericos, pues se encarga de eliminarlos.
 * El programa tambien determina el tamaño de la imagen dependiendo de el numero de datos que se quieran graficar
 *
-* Autores: Leiver Andres Campeón
-*          Jorge Mario Gil
+* Autores: Leiver Andres Campeón.
+*          Jorge Mario Gil.
 * Fecha: 30 Nov 2015
-* Version: V 3.1
+* Version: V 3.2
 *
 */
 #include <bits/stdc++.h>
@@ -25,7 +25,7 @@ int str_to_int(string s) {
 }
 
 bool is_num(char a) {
-    return (a > '0' && a < '9');
+  return (a >= '0' && a <= '9');
 }
 
 void primes_generator(int n) {//n max number until i'll calculate
@@ -42,70 +42,74 @@ void primes_generator(int n) {//n max number until i'll calculate
 }
 
 void prime_factorize( int n ) {
-    vector <int> factors;
-    int aux_n = n;
-    for(int i = 0; i < primes.size(); ++i) {
-        if(aux_n % primes[i] == 0) {
-            while(aux_n % primes[i] == 0) {
-                aux_n /= primes[i];
-                factors.push_back(primes[i]);
-            }
-        }
+  vector <int> factors;
+  int aux_n = n;
+  for(int i = 0; i < primes.size(); ++i) {
+    if(aux_n % primes[i] == 0) {
+      while(aux_n % primes[i] == 0) {
+        aux_n /= primes[i];
+        factors.push_back(primes[i]);
+      }
     }
-    if( aux_n > 1 ) {
-        // aux_n is greater than 1, so we are sure that this aux_n is a prime
-        factors.push_back(aux_n); // added n (the prime) in the list
-    }
+  }
+  if( aux_n > 1 ) {
+    // aux_n is greater than 1, so we are sure that this aux_n is a prime
+    factors.push_back(aux_n); // added n (the prime) in the list
+  }
 
-    ////////////////// test ////////////////////////////////////
-    cout << "Factores del numero: " << n <<" :\n";
-    for (int i = 0; i < factors.size(); ++i) {
-      cout<<factors[i]<<" ";
-    }
-    cout<<endl;
-    ////////////////// test ////////////////////////////////////
+  ////////////////// test ////////////////////////////////////
+  cout << "Factores del numero: " << n <<" :\n";
+  for (int i = 0; i < factors.size(); ++i) {
+    cout<<factors[i]<<" ";
+  }
+  cout<<endl;
+  ////////////////// test ////////////////////////////////////
 
-    ///////////////////// derteminate Height and Width //////////////////////
-    int dif  = 0;
-    for (int i = 0; i < factors.size(); ++i){
-      if (abs((H*factors[i]) - W) <  abs(H - (W*factors[i])))
-        H *= factors[i];
-      else
-        W *= factors[i];
-    }
-    //set a limit of pixels, to be able to show it
-    if (H > 1200) {
-      H = 1200;
-    }
-    if (W > 1200) {
-      W = 1200;
-    }
+  ///////////////// derteminate Height and Width /////////////
+  int dif  = 0;
+  for (int i = 0; i < factors.size(); ++i){
+    if (abs((H*factors[i]) - W) <  abs(H - (W*factors[i])))
+      H *= factors[i];
+    else
+      W *= factors[i];
+  }
+  //set a limit of pixels, to be able to show it on a standar screen
+  if (H > 1200) {
+    H = 1200;
+  }
+  if (W > 1200) {
+    W = 1200;
+  }
 
-    //and this is because We want a semi-square image. dimension diference no greater than 400
-    if ((H - W) < -400) {
-      H += 400;
-      W -= 400;
-    } else if ((H - W) > 400) {
-      W += 400;
-      H -= 400;
-    }
-    ////////////////// test ////////////////////////////////////
-    // cout << "Las dimensiones de las matrices: (H, W) " << H << " " << W << endl;
-   ////////////////// test ////////////////////////////////////
+  //and this is because We want a semi-square image. dimension diference no greater than 400
+  if ((H - W) < -400) {
+    H += 400;
+    W -= 400;
+  } else if ((H - W) > 400) {
+    W += 400;
+    H -= 400;
+  }
+  ////////////////// test ////////////////////////////////////
+  // cout << "Las dimensiones de las matrices: (H, W) " << H << " " << W << endl;
+ ////////////////// test ////////////////////////////////////
 }
 
 int main() {
   string s;
   string rest = "";
-  int aux_num = 0, count = 0, elem_per_color = 0;
-  int counter = 0;
+  int aux_num = 0,
+      elem_per_color = 0,
+      counter = 0,
+      count = 0;
+
   vector <int> number;//here I have rgb, I don't need them physically
   // int red[H][W],
   //     blue[H][W],
   //     green[H][W];
 
-  ifstream fin("sqrt5_web.txt");
-  ofstream fout("output_sqrt5.txt");
+  ////////////// Filter. take no numeric chars out the file ////////////////////
+  ifstream fin("pi_web.txt");
+  ofstream fout("output_pi.txt");//in this file I'll have the number after filter
   while (!fin.eof() && counter < LIMIT) {
     string s;
     fin >> s;
@@ -116,29 +120,22 @@ int main() {
           counter++;
       }
     }
-
-
   }
   cout << "Numeros procesados: " << counter << endl;
   fout.close();
   fin.close();
 
-  ifstream finput("output_sqrt5.txt");
+  //// after this I gonna have the file without no numeric chars///////////////
 
-  ///////////// dividing Number each 3 digits ////////////////////////////////////////
+  ///////////// dividing Number each 3 digits /////////////////////////////////
+  ifstream finput("output_pi.txt");
   string aux_str = "";
-  int total_nums = 0;//total of numebers processed
   bool writeEn = false;//is true when It should add a numeber to the vector, false otherwise
   while(!finput.eof()) {
-
     finput >> s;// get each line
     s = rest + s;
-    // cout<<"before eliminate "<<s.size()<<endl;
-    //s.erase(std::remove(s.begin(), s.end(), '\n'), s.end());//eliminar todos los \n
-    // cout<<"after eliminate "<<s.size()<<endl;
-    total_nums += s.size() - rest.size();
-    for (int i = 0; i < s.size(); ++i){
-      if ((s.size() - i) >= 3) {
+    for (int i = 0; i < s.size(); ++i) {
+      if ( (s.size() - i) >= 3 ) {
         if (s[i] != '\n') { //just in case that a \n has passed
           aux_str += s[i];
           count++;
@@ -156,7 +153,7 @@ int main() {
       }
 
       if (writeEn){
-        if (aux_num > 255) {
+        if (aux_num > 255) {//if the value is grater I just pick up a rand number
           number.push_back( rand()%250 );
         } else {
           number.push_back(aux_num);
@@ -165,22 +162,20 @@ int main() {
       }
     }
   }
-
+  finput.close();
   ////////////////// test ////////////////////////////////////
   cout<<"Tamaño del arreglo: "<<number.size()<<endl;
-  // cout<<"numeros procesados: "<<total_nums<<endl;
   ////////////////// test ////////////////////////////////////
 
-  finput.close();
   ///////////// saving number in the matrices ///////////////////////////////////////////
 
-  elem_per_color = number.size();
+  elem_per_color = number.size()/3;
   // cout<< "each matrix should have: " << elem_per_color << " numbers."<<endl;
 
-  primes_generator(elem_per_color/3);
-  prime_factorize(elem_per_color/3);
+  primes_generator(elem_per_color);
+  prime_factorize(elem_per_color);
 
-  unsigned char *img = NULL;
+  unsigned char *img = NULL;//final matrix to write in the file.
   img = (unsigned char *)malloc(3*W*H);
   int x = 0, y = 0;
   for (int i = 0; i < W; ++i) {
@@ -198,7 +193,7 @@ int main() {
   unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
   unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
   unsigned char bmppad[3] = {0,0,0};
-
+  //corrimiento de bytes:la info de filesize, W y H ocupan 4 bytes en el archivo bmp
   bmpfileheader[ 2] = (unsigned char)(filesize    );
   bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
   bmpfileheader[ 4] = (unsigned char)(filesize>>16);
@@ -230,8 +225,8 @@ int main() {
   //   // foutput << (unsigned char)number[i];
   // foutput.close();
 
-
-  f = fopen("sqrt5.bmp","wb");
+  ///// finally writing results ///////////////////////////////
+  f = fopen("pi.bmp","wb");
 
   fwrite(bmpfileheader,1,14,f);
   fwrite(bmpinfoheader,1,40,f);
@@ -241,5 +236,6 @@ int main() {
       fwrite(bmppad,1,(4-(W*3)%4)%4,f);
   }
   fclose(f);
+  //////////////////////////////////////////////////////////////
   return 0;
 }
