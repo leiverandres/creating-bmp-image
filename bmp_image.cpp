@@ -6,7 +6,7 @@
 * Autores: Leiver Andres Campeón.
 *          Jorge Mario Gil.
 * Fecha: 30 Nov 2015
-* Version: V 3.2
+* Version: V 3.3
 *
 */
 #include <bits/stdc++.h>
@@ -190,9 +190,27 @@ int main() {
   cout << "Las dimensiones de las matrices: (H, W) " << H << " " << W << endl;
 
   int filesize = 54 + ( H*W*3);
-  unsigned char bmpfileheader[14] = {'B','M', 0,0,0,0, 0,0, 0,0, 54,0,0,0};
-  unsigned char bmpinfoheader[40] = {40,0,0,0, 0,0,0,0, 0,0,0,0, 1,0, 24,0};
-  unsigned char bmppad[3] = {0,0,0};
+  unsigned char bmpfileheader[14] = {'B','M',//Id format
+                                      0,0,0,0, //SizeFile
+                                      0,0,//reserved
+                                      0,0,//reserved
+                                      54,0,0,0//start data(offset)
+                                    };
+  unsigned char bmpinfoheader[40] = {40,0,0,0,//headerSize
+                                     0,0,0,0,//Width
+                                     0,0,0,0,//Height
+                                     1,0,//bitPlanes must be 1
+                                     24,0,//bits per pixel
+                                     0,0,0,0,//Compression type
+                                     0,0,0,0,//Image Size, 0 for uncompressed Im
+                                     0x13,0x0B,0,0,//X resolution in pixels per meter
+                                     0x13,0x0B,0,0,//Y resolution in pixels per meter
+                                     0,0,0,0,//Number Color Map
+                                     0,0,0,0,//Number of significant colors
+                                    };
+
+  unsigned char bmppad[3] = {0,0,0};//padding, zero by default
+
   //corrimiento de bytes:la info de filesize, W y H ocupan 4 bytes en el archivo bmp
   bmpfileheader[ 2] = (unsigned char)(filesize    );
   bmpfileheader[ 3] = (unsigned char)(filesize>> 8);
@@ -208,24 +226,8 @@ int main() {
   bmpinfoheader[10] = (unsigned char)(       H>>16);
   bmpinfoheader[11] = (unsigned char)(       H>>24);
 
-  FILE *f;
-  // ofstream foutput("result.bmp");
-  // for (int i = 0; i < 14; ++i)
-  //   foutput << bmpfileheader[i];
-  // for (int i = 0; i < 40; i++)
-  //   foutput << bmpinfoheader;
-  // for (int i = 0; i < H; ++i) {
-  //   for (int j = (W*(H-i-1)*3); j < ((W*(H-i-1)*3) + 3); ++j) {
-  //     foutput << img[j];
-  //   }
-  //   for(int k = 0; k < (4-(W*3)%4)%4; ++k) {
-  //     foutput << bmppad[k];
-  //   }
-  // }
-  //   // foutput << (unsigned char)number[i];
-  // foutput.close();
-
   ///// finally writing results ///////////////////////////////
+  FILE *f;
   f = fopen("pi.bmp","wb");
 
   fwrite(bmpfileheader,1,14,f);
